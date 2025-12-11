@@ -1,0 +1,5 @@
+assettracer-frontend/node_modules/
+assettracer-backend/node_modules/
+assettracer-frontend/.next/
+assettracer-backend/.env
+assettracer-frontend/.env
