@@ -76,7 +76,7 @@ export default function AddItemDialog({ onSuccess }) {
         </DialogHeader>
 
         {/* NAME */}
-        <div>
+        <div className="space-y-2">
           <Label>Nama Barang</Label>
           <Input
             value={form.name}
@@ -86,7 +86,7 @@ export default function AddItemDialog({ onSuccess }) {
         </div>
 
         {/* DESCRIPTION */}
-        <div>
+        <div className="space-y-2">
           <Label>Deskripsi</Label>
           <Input
             value={form.description}
@@ -106,21 +106,21 @@ export default function AddItemDialog({ onSuccess }) {
 
         {/* IF UNIQUE → SERIAL CODE */}
         {form.is_unique && (
-          <div>
+          <div className="space-y-2">
             <Label>Serial Code</Label>
             <Input
               value={form.serial_code}
               onChange={(e) =>
                 setForm({ ...form, serial_code: e.target.value })
               }
-              placeholder="WAJIB untuk barang unik"
+              placeholder="wajib untuk barang unik"
             />
           </div>
         )}
 
         {/* IF NON-UNIQUE → QUANTITY */}
         {!form.is_unique && (
-          <div>
+          <div className="space-y-2">
             <Label>Quantity</Label>
             <Input
               type="number"

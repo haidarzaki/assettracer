@@ -316,7 +316,7 @@ export default function ItemsTable() {
             ))}
 
             {/* Ellipsis (opsional kalau page > 5) */}
-            {totalPages > 10 && page < totalPages - 2 && <PaginationEllipsis />}
+            {totalPages > 5 && page < totalPages - 2 && <PaginationEllipsis />}
 
             {/* Next */}
             <PaginationItem>

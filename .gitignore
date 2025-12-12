@@ -1,11 +1,11 @@
-# FRONTEND
+# Node modules
 assettracer-frontend/node_modules/
-assettracer-frontend/.next/
+assetTracer-backend/node_modules/
+
+# Environment
+assetTracer-backend/.env
 assettracer-frontend/.env
 
-# BACKEND
-assetTracer-backend/node_modules/
-assetTracer-backend/.env
-
-# System files
-.DS_Store
+# Build files
+assettracer-frontend/.next/
+assettracer-frontend/out/
