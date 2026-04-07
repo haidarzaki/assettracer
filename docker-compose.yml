@@ -1,0 +1,56 @@
+services:
+  # 1. Servis Database (PostgreSQL)
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres # Ganti dengan username yang Anda inginkan
+      POSTGRES_PASSWORD: admin123 # Ganti dengan password yang Anda inginkan
+      POSTGRES_DB: assetTracer # Nama database Anda
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data # Penting: Agar data tidak hilang!
+    networks:
+      - asset-network
+
+  # 2. Servis Backend (Next.js)
+  backend-server:
+    build: ./assetTracer-backend
+    restart: always
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./assetTracer-backend:/app
+      - /app/node_modules
+    networks:
+      - asset-network
+    depends_on:
+      - db # Memastikan database menyala duluan sebelum backend
+    environment:
+      # URL Koneksi DB (Gunakan nama servis 'db' sebagai host-nya)
+      DATABASE_URL: postgresql://postgres_user:postgres_password@db:5432/assettracer_db
+
+  # 3. Servis Frontend (React)
+  frontend-app:
+    build: ./assettracer-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./assettracer-frontend:/app
+      - /app/node_modules
+    networks:
+      - asset-network
+    stdin_open: true
+    depends_on:
+      - backend-server # Memastikan backend menyala duluan sebelum frontend
+
+# Mendefinisikan jembatan komunikasi antar servis
+networks:
+  asset-network:
+    driver: bridge
+
+# Mendefinisikan tempat penyimpanan permanen untuk database
+volumes:
+  pgdata:

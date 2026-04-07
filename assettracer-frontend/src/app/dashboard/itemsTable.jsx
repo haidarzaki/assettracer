@@ -54,7 +54,7 @@ export default function ItemsTable() {
 
   const currentItems = items.slice(
     (page - 1) * itemsPerPage,
-    page * itemsPerPage
+    page * itemsPerPage,
   );
 
   // ========================
@@ -137,7 +137,7 @@ export default function ItemsTable() {
     await axios.post(
       `http://localhost:4000/items/stock-in/${selectedItem.id}`,
       { amount: stockQty, note: stockNote },
-      { headers: { Authorization: `Bearer ${token}` } }
+      { headers: { Authorization: `Bearer ${token}` } },
     );
     fetchItems(token);
     setOpenStockIn(false);
@@ -148,7 +148,7 @@ export default function ItemsTable() {
     await axios.post(
       `http://localhost:4000/items/stock-out/${selectedItem.id}`,
       { amount: stockQty, note: stockNote },
-      { headers: { Authorization: `Bearer ${token}` } }
+      { headers: { Authorization: `Bearer ${token}` } },
     );
     fetchItems(token);
     setOpenStockOut(false);
@@ -159,7 +159,7 @@ export default function ItemsTable() {
     await axios.post(
       `http://localhost:4000/items/${selectedItem.id}/borrow`,
       { borrower_name: borrowerName, note: borrowNote },
-      { headers: { Authorization: `Bearer ${token}` } }
+      { headers: { Authorization: `Bearer ${token}` } },
     );
     fetchItems(token);
     setOpenBorrow(false);
@@ -172,7 +172,7 @@ export default function ItemsTable() {
       await axios.post(
         `http://localhost:4000/items/${itemId}/return`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       fetchItems(token);
