@@ -40,7 +40,7 @@ export default function AddItemDialog({ onSuccess }) {
       const token = localStorage.getItem("token");
 
       await axios.post(
-        "http://localhost:4000/items/add",
+        "http://172.172.255.184:4000/items/add",
         {
           name: form.name,
           description: form.description,
@@ -50,7 +50,7 @@ export default function AddItemDialog({ onSuccess }) {
         },
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       setOpen(false);

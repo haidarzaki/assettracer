@@ -30,14 +30,14 @@ export default function StockLogTable() {
   const totalPages = Math.ceil(data.length / rowsPerPage);
   const paginatedData = data.slice(
     (page - 1) * rowsPerPage,
-    page * rowsPerPage
+    page * rowsPerPage,
   );
 
   // Fetch items
   const fetchItemsMap = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:4000/items", {
+      const res = await fetch("http://172.172.255.184:4000/items", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const items = await res.json();
@@ -53,7 +53,7 @@ export default function StockLogTable() {
   const fetchStockLogs = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:4000/items/stock", {
+      const res = await fetch("http://172.172.255.184:4000/items/stock", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const json = await res.json();

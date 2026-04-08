@@ -62,7 +62,7 @@ export default function ItemsTable() {
   // ========================
   const fetchItems = async (token) => {
     try {
-      const res = await axios.get("http://localhost:4000/items", {
+      const res = await axios.get("http://172.172.255.184:4000/items", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setItems(res.data);
@@ -125,9 +125,13 @@ export default function ItemsTable() {
   // ========================
   const handleUpdateItem = async () => {
     const token = localStorage.getItem("token");
-    await axios.put(`http://localhost:4000/items/${selectedItem.id}`, form, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    await axios.put(
+      `http://172.172.255.184:4000/items/${selectedItem.id}`,
+      form,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
     fetchItems(token);
     setOpenEdit(false);
   };
@@ -135,7 +139,7 @@ export default function ItemsTable() {
   const handleStockIn = async () => {
     const token = localStorage.getItem("token");
     await axios.post(
-      `http://localhost:4000/items/stock-in/${selectedItem.id}`,
+      `http://172.172.255.184:4000/items/stock-in/${selectedItem.id}`,
       { amount: stockQty, note: stockNote },
       { headers: { Authorization: `Bearer ${token}` } },
     );
@@ -146,7 +150,7 @@ export default function ItemsTable() {
   const handleStockOut = async () => {
     const token = localStorage.getItem("token");
     await axios.post(
-      `http://localhost:4000/items/stock-out/${selectedItem.id}`,
+      `http://172.172.255.184:4000/items/stock-out/${selectedItem.id}`,
       { amount: stockQty, note: stockNote },
       { headers: { Authorization: `Bearer ${token}` } },
     );
@@ -157,7 +161,7 @@ export default function ItemsTable() {
   const handleBorrow = async () => {
     const token = localStorage.getItem("token");
     await axios.post(
-      `http://localhost:4000/items/${selectedItem.id}/borrow`,
+      `http://172.172.255.184:4000/items/${selectedItem.id}/borrow`,
       { borrower_name: borrowerName, note: borrowNote },
       { headers: { Authorization: `Bearer ${token}` } },
     );
@@ -170,7 +174,7 @@ export default function ItemsTable() {
       const token = localStorage.getItem("token");
 
       await axios.post(
-        `http://localhost:4000/items/${itemId}/return`,
+        `http://172.172.255.184:4000/items/${itemId}/return`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -186,7 +190,7 @@ export default function ItemsTable() {
     const token = localStorage.getItem("token");
     if (!confirm("Hapus item ini?")) return;
 
-    await axios.delete(`http://localhost:4000/items/${id}`, {
+    await axios.delete(`http://172.172.255.184:4000/items/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 

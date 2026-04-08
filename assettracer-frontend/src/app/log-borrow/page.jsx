@@ -24,7 +24,7 @@ export default function LogBorrowPage() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    fetch("http://localhost:4000/items/borrow", {
+    fetch("http://172.172.255.184:4000/items/borrow", {
       headers: {
         Authorization: `Bearer ${token}`,
       },

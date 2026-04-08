@@ -24,7 +24,7 @@ export default function LogStockPage() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    fetch("http://localhost:4000/items/stock", {
+    fetch("http://172.172.255.184:4000/items/stock", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
