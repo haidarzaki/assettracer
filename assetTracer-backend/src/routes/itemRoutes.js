@@ -14,20 +14,24 @@ import {
 } from "../controllers/user/borrowController.js";
 import { returnItem } from "../controllers/user/returnControllers.js";
 
-import { verifyToken } from "../middlewares/authMiddleware.js";
+// 1. TAMBAHKAN IMPORT isAdmin DARI MIDDLEWARE
+import { verifyToken, isAdmin } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-//POST items
-router.get("/", verifyToken, getItems);
-router.post("/add", verifyToken, addItems);
-router.put("/:id", verifyToken, updateItems);
-router.delete("/:id", verifyToken, deleteItems);
-router.get("/stock", verifyToken, stockLog);
-router.post("/stock-in/:id", verifyToken, stockIn);
-router.post("/stock-out/:id", verifyToken, stockOut);
-router.get("/borrow", verifyToken, getBorrowLog);
-router.post("/:item_id/borrow", verifyToken, borrowItem);
-router.post("/:item_id/return", verifyToken, returnItem);
+// USER BIASA & ADMIN BISA AKSES
+router.get("/", verifyToken, getItems); // Lihat daftar barang
+router.get("/borrow", verifyToken, getBorrowLog); // Lihat histori peminjaman
+router.post("/:item_id/borrow", verifyToken, borrowItem); // Pinjam barang
+router.post("/:item_id/return", verifyToken, returnItem); // Kembalikan barang
+
+// HANYA ADMIN YANG BISA AKSES
+router.post("/add", verifyToken, isAdmin, addItems); // Tambah barang baru
+router.put("/:id", verifyToken, isAdmin, updateItems); // Edit data barang
+router.delete("/:id", verifyToken, isAdmin, deleteItems); // Hapus barang
+
+router.get("/stock", verifyToken, isAdmin, stockLog); // Lihat laporan stok masuk/keluar
+router.post("/stock-in/:id", verifyToken, isAdmin, stockIn); // Tambah stok barang
+router.post("/stock-out/:id", verifyToken, isAdmin, stockOut); // Kurangi stok barang (selain dipinjam)
 
 export default router;

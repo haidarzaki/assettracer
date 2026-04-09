@@ -7,8 +7,8 @@ export const loginUser = async (req, res) => {
     const { username, password } = req.body;
 
     const existingUser = await pool.query(
-      `SELECT * FROM "admins" WHERE username = $1`,
-      [username]
+      `SELECT * FROM "users" WHERE username = $1`,
+      [username],
     );
     if (existingUser.rowCount === 0) {
       return res.status(404).json({ error: "username not found" });
@@ -19,21 +19,26 @@ export const loginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ error: "Wrong password dumbass!" });
     }
+
+    // 1. TAMBAHKAN ROLE DI DALAM TOKEN
     const token = jwt.sign(
       {
         id: user.id,
         username: user.username,
+        role: user.role,
       },
       process.env.JWT_ACCESS_SECRET,
-      { expiresIn: process.env.JWT_ACCESS_EXPIRES }
+      { expiresIn: process.env.JWT_ACCESS_EXPIRES },
     );
 
+    // 2. TAMBAHKAN ROLE DI JSON RESPONSE UNTUK FRONTEND
     return res.json({
       message: "Login success",
       token,
       user: {
         id: user.id,
         username: user.username,
+        role: user.role,
       },
     });
   } catch (error) {
