@@ -35,6 +35,7 @@ export default function LoginPage() {
         setError(data.error || "Login gagal");
       } else {
         localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
         alert("Login berhasil!");
         window.location.href = "/dashboard";
       }
@@ -49,7 +50,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <Card className="w-[350px]">
         <CardHeader>
-          <CardTitle className="text-center">Admin Login</CardTitle>
+          <CardTitle className="text-center">Login</CardTitle>
         </CardHeader>
 
         <CardContent>
