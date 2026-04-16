@@ -27,6 +27,9 @@ export default function ItemsTable() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // ✅ STATE BARU: Untuk menyimpan role dari Local Storage
+  const [role, setRole] = useState(null);
+
   // modal states
   const [openEdit, setOpenEdit] = useState(false);
   const [openStockIn, setOpenStockIn] = useState(false);
@@ -74,8 +77,16 @@ export default function ItemsTable() {
   };
 
   useEffect(() => {
+    // 1. Ambil Token
     const token = localStorage.getItem("token");
     if (token) fetchItems(token);
+
+    // 2. Ambil Role (KTP)
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setRole(parsedUser.role);
+    }
   }, []);
 
   if (loading) {
@@ -221,8 +232,8 @@ export default function ItemsTable() {
                 <td className="border p-2 text-center">{item.quantity}</td>
                 <td className="border p-2 flex gap-2 justify-center">
                   <div className="flex justify-end gap-2">
-                    {/* ✅ STOCK IN → HANYA NON UNIQUE */}
-                    {!item.is_unique && (
+                    {/* ✅ CONDITIONAL: STOCK IN → HANYA NON UNIQUE DAN ADMIN */}
+                    {!item.is_unique && role === "ADMIN" && (
                       <button
                         onClick={() => handleOpenStockIn(item)}
                         className="group-hover:opacity-100 transition p-1 rounded hover:bg-green-50 text-green-600"
@@ -232,8 +243,8 @@ export default function ItemsTable() {
                       </button>
                     )}
 
-                    {/* ✅ STOCK OUT → HANYA NON UNIQUE */}
-                    {!item.is_unique && (
+                    {/* ✅ CONDITIONAL: STOCK OUT → HANYA NON UNIQUE DAN ADMIN */}
+                    {!item.is_unique && role === "ADMIN" && (
                       <button
                         onClick={() => handleOpenStockOut(item)}
                         className="group-hover:opacity-100 transition p-1 rounded hover:bg-yellow-50 text-yellow-700"
@@ -243,6 +254,7 @@ export default function ItemsTable() {
                       </button>
                     )}
 
+                    {/* ✅ TOMBOL BORROW (BISA DIAKSES SEMUA ROLE) */}
                     {item.is_unique && item.status === "available" && (
                       <Button
                         size="sm"
@@ -256,6 +268,7 @@ export default function ItemsTable() {
                       </Button>
                     )}
 
+                    {/* ✅ TOMBOL RETURN (BISA DIAKSES SEMUA ROLE) */}
                     {item.is_unique && item.status === "borrowed" && (
                       <Button
                         size="sm"
@@ -266,30 +279,35 @@ export default function ItemsTable() {
                       </Button>
                     )}
 
-                    {/* ✅ TOMBOL EDIT (SIAP UNTUK NANTI) */}
-                    <button
-                      className="opacity-0 group-hover:opacity-100 transition p-1 rounded hover:bg-blue-100 text-blue-600"
-                      title="Edit item"
-                      onClick={() => handleOpenEdit(item)}
-                    >
-                      <Pencil size={18} />
-                    </button>
+                    {/* ✅ CONDITIONAL: TOMBOL EDIT (HANYA ADMIN) */}
+                    {role === "ADMIN" && (
+                      <button
+                        className="opacity-0 group-hover:opacity-100 transition p-1 rounded hover:bg-blue-100 text-blue-600"
+                        title="Edit item"
+                        onClick={() => handleOpenEdit(item)}
+                      >
+                        <Pencil size={18} />
+                      </button>
+                    )}
 
-                    {/* ✅ TOMBOL DELETE */}
-                    <button
-                      onClick={() => handleDelete(item.id)}
-                      className="opacity-0 group-hover:opacity-100 transition p-1 rounded hover:bg-red-100 text-red-600"
-                      title="Hapus item"
-                    >
-                      <Trash2 size={18} />
-                    </button>
+                    {/* ✅ CONDITIONAL: TOMBOL DELETE (HANYA ADMIN) */}
+                    {role === "ADMIN" && (
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="opacity-0 group-hover:opacity-100 transition p-1 rounded hover:bg-red-100 text-red-600"
+                        title="Hapus item"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    )}
                   </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <table></table>
+
+        {/* Pagination logic tetap utuh di bawah sini */}
         <Pagination className="mt-4">
           <PaginationContent>
             {/* Prev */}
@@ -319,7 +337,7 @@ export default function ItemsTable() {
               </PaginationItem>
             ))}
 
-            {/* Ellipsis (opsional kalau page > 5) */}
+            {/* Ellipsis */}
             {totalPages > 5 && page < totalPages - 2 && <PaginationEllipsis />}
 
             {/* Next */}
@@ -336,9 +354,7 @@ export default function ItemsTable() {
         </Pagination>
       </div>
 
-      {/* ===================== */}
-      {/* ✅ EDIT MODAL */}
-      {/* ===================== */}
+      {/* Modal Dialogs tetap utuh di bawah sini */}
       <Dialog open={openEdit} onOpenChange={setOpenEdit}>
         <DialogContent>
           <DialogHeader>
@@ -361,9 +377,6 @@ export default function ItemsTable() {
         </DialogContent>
       </Dialog>
 
-      {/* ===================== */}
-      {/* ✅ STOCK IN */}
-      {/* ===================== */}
       <Dialog open={openStockIn} onOpenChange={setOpenStockIn}>
         <DialogContent>
           <DialogHeader>
@@ -386,9 +399,6 @@ export default function ItemsTable() {
         </DialogContent>
       </Dialog>
 
-      {/* ===================== */}
-      {/* ✅ STOCK OUT */}
-      {/* ===================== */}
       <Dialog open={openStockOut} onOpenChange={setOpenStockOut}>
         <DialogContent>
           <DialogHeader>
@@ -411,9 +421,6 @@ export default function ItemsTable() {
         </DialogContent>
       </Dialog>
 
-      {/* ===================== */}
-      {/* ✅ BORROW */}
-      {/* ===================== */}
       <Dialog open={openBorrow} onOpenChange={setOpenBorrow}>
         <DialogContent>
           <DialogHeader>
