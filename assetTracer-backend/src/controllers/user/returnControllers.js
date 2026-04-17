@@ -41,7 +41,7 @@ export const returnItem = async (req, res) => {
       ORDER BY borrow_date DESC
       LIMIT 1
       `,
-      [item_id]
+      [item_id],
     );
 
     if (borrowQuery.rowCount === 0) {
@@ -51,6 +51,14 @@ export const returnItem = async (req, res) => {
     }
 
     const borrowRecord = borrowQuery.rows[0];
+    const logged_in_user = req.user;
+
+    if (
+      logged_in_user.role !== "ADMIN" &&
+      logged_in_user.id !== borrowRecord.user_id
+    ) {
+      return res.status(403).json({ error: "Akses Ditolak!" });
+    }
 
     // 3. Update item → available
     const updatedItem = await pool.query(
@@ -61,7 +69,7 @@ export const returnItem = async (req, res) => {
       WHERE id = $1
       RETURNING *
       `,
-      [item_id]
+      [item_id],
     );
 
     // 4. Update borrow_transactions
@@ -72,7 +80,7 @@ export const returnItem = async (req, res) => {
       WHERE id = $1
       RETURNING *
       `,
-      [borrowRecord.id]
+      [borrowRecord.id],
     );
 
     res.json({

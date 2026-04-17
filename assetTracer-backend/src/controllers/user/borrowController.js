@@ -6,6 +6,7 @@ export const borrowItem = async (req, res) => {
   try {
     const { item_id } = req.params;
     const { borrower_name, note } = req.body;
+    const logged_in_user_id = req.user.id;
 
     if (isNaN(item_id)) {
       return res.status(400).json({ error: "ID must be a number" });
@@ -18,7 +19,7 @@ export const borrowItem = async (req, res) => {
     // 1. cek item exist
     const borrowQuery = await client.query(
       `SELECT * FROM "Items" WHERE id = $1`,
-      [item_id]
+      [item_id],
     );
 
     if (borrowQuery.rowCount === 0) {
@@ -44,10 +45,10 @@ export const borrowItem = async (req, res) => {
     // 3. insert borrow transaction
     const borrowInsert = await client.query(
       `INSERT INTO borrow_transactions 
-        (item_id, borrower_name, borrow_date, return_date, note)
+        (item_id, user_id, borrower_name, borrow_date, return_date, note)
        VALUES ($1, $2, NOW(), NULL, $3)
        RETURNING *`,
-      [item_id, borrower_name, note || null]
+      [item_id, logged_in_user_id, borrower_name, note || null],
     );
 
     // 4. update item status → borrowed
@@ -56,7 +57,7 @@ export const borrowItem = async (req, res) => {
        SET status = $1, updated_at = NOW() 
        WHERE id = $2 
        RETURNING *`,
-      ["borrowed", item_id]
+      ["borrowed", item_id],
     );
 
     // 🔥 COMMIT TRANSACTION
@@ -79,7 +80,7 @@ export const borrowItem = async (req, res) => {
 export const getBorrowLog = async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT * FROM "borrow_transactions" ORDER BY id ASC`
+      `SELECT * FROM "borrow_transactions" ORDER BY id ASC`,
     );
     res.json(result.rows);
   } catch (err) {
