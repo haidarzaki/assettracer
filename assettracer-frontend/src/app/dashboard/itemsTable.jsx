@@ -52,6 +52,7 @@ export default function ItemsTable() {
 
   const [limit, setLimit] = useState(20);
   const [visibleCount, setVisibleCount] = useState(20);
+  const currentItems = items.slice(0, visibleCount);
 
   //handler
   const handleChangeLimit = (newLimit) => {
