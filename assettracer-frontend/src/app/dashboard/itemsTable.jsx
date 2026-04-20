@@ -50,8 +50,8 @@ export default function ItemsTable() {
   const [borrowerName, setBorrowerName] = useState("");
   const [borrowNote, setBorrowNote] = useState("");
 
-  const [limit, setLimit] = useState(20);
-  const [visibleCount, setVisibleCount] = useState(20);
+  const [limit, setLimit] = useState(10);
+  const [visibleCount, setVisibleCount] = useState(10);
   const currentItems = items.slice(0, visibleCount);
 
   //handler
