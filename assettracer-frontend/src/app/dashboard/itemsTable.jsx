@@ -13,15 +13,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Trash2, Pencil } from "lucide-react";
 import AddItemDialog from "./AddItemDialog";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+// import {
+//   Pagination,
+//   PaginationContent,
+//   PaginationEllipsis,
+//   PaginationItem,
+//   PaginationLink,
+//   PaginationNext,
+//   PaginationPrevious,
+// } from "@/components/ui/pagination";
 
 export default function ItemsTable() {
   const [items, setItems] = useState([]);
@@ -50,15 +50,19 @@ export default function ItemsTable() {
   const [borrowerName, setBorrowerName] = useState("");
   const [borrowNote, setBorrowNote] = useState("");
 
-  const [page, setPage] = useState(1);
-  const itemsPerPage = 5;
+  const [limit, setLimit] = useState(20);
+  const [visibleCount, setVisibleCount] = useState(20);
 
-  const totalPages = Math.ceil(items.length / itemsPerPage);
+  //handler
+  const handleChangeLimit = (newLimit) => {
+    setLimit(newLimit);
+    setVisibleCount(newLimit);
+  };
 
-  const currentItems = items.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage,
-  );
+  //handler "load more"
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => prev + limit);
+  }
 
   // ========================
   // ✅ FETCH ITEMS
@@ -307,51 +311,37 @@ export default function ItemsTable() {
           </tbody>
         </table>
 
-        {/* Pagination logic tetap utuh di bawah sini */}
-        <Pagination className="mt-4">
-          <PaginationContent>
-            {/* Prev */}
-            <PaginationItem>
-              <PaginationPrevious
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (page > 1) setPage(page - 1);
-                }}
-              />
-            </PaginationItem>
-
-            {/* Numbering */}
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-              <PaginationItem key={p}>
-                <PaginationLink
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setPage(p);
-                  }}
-                  isActive={p === page}
-                >
-                  {p}
-                </PaginationLink>
-              </PaginationItem>
+        {/* pagination */}
+        {/* ===================== */}
+        {/* ✅ CUSTOM PAGINATION (LOAD MORE) */}
+        {/* ===================== */}
+        <div className="flex justify-between items-center mt-6 bg-gray-900 text-white p-3 rounded-md">
+          {/* Bagian Kiri: Pilihan Batas Data */}
+          <div className="flex gap-2">
+            {[20, 100, 500].map((num) => (
+              <button
+                key={num}
+                onClick={() => handleChangeLimit(num)}
+                className={`px-3 py-1 rounded text-sm font-medium transition ${
+                  limit === num
+                    ? "bg-gray-700 text-white"
+                    : "bg-transparent text-gray-400 hover:text-white hover:bg-gray-800"
+                }`}
+              >
+                {num}
+              </button>
             ))}
+          </div>
 
-            {/* Ellipsis */}
-            {totalPages > 5 && page < totalPages - 2 && <PaginationEllipsis />}
-
-            {/* Next */}
-            <PaginationItem>
-              <PaginationNext
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (page < totalPages) setPage(page + 1);
-                }}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+          {visibleCount < items.length && (
+            <button
+              onClick={handleLoadMore}
+              className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium rounded transition"
+            >
+              Load More
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Modal Dialogs tetap utuh di bawah sini */}
