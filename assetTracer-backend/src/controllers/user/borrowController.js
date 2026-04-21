@@ -46,7 +46,7 @@ export const borrowItem = async (req, res) => {
     const borrowInsert = await client.query(
       `INSERT INTO borrow_transactions 
         (item_id, user_id, borrower_name, borrow_date, return_date, note)
-       VALUES ($1, $2, NOW(), NULL, $3)
+       VALUES ($1, $2, $3, NOW(), NULL, $4)
        RETURNING *`,
       [item_id, logged_in_user_id, borrower_name, note || null],
     );
