@@ -17,7 +17,7 @@ export const borrowItem = async (req, res) => {
     // }
 
     const userQuery = await client.query(
-      'SELECT username FROM "Users" WHERE id = $1',
+      'SELECT username FROM "users" WHERE id = $1',
       [logged_in_user_id],
     );
 
