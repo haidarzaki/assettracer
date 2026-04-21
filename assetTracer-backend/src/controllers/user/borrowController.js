@@ -5,16 +5,27 @@ export const borrowItem = async (req, res) => {
 
   try {
     const { item_id } = req.params;
-    const { borrower_name, note } = req.body;
+    const { note } = req.body;
     const logged_in_user_id = req.user.id;
 
     if (isNaN(item_id)) {
       return res.status(400).json({ error: "ID must be a number" });
     }
 
-    if (!borrower_name) {
-      return res.status(400).json({ error: "Borrower name is required" });
+    // if (!borrower_name) {
+    //   return res.status(400).json({ error: "Borrower name is required" });
+    // }
+
+    const userQuery = await client.query(
+      'SELECT username FROM "Users" WHERE id = $1',
+      [logged_in_user_id],
+    );
+
+    if (userQuery.rowCount === 0) {
+      return res.status(404).json({ error: "User not Found" });
     }
+
+    const borrower_name = userQuery.rows[0].username;
 
     // 1. cek item exist
     const borrowQuery = await client.query(

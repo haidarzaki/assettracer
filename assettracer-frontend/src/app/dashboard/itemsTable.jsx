@@ -47,7 +47,6 @@ export default function ItemsTable() {
   const [stockQty, setStockQty] = useState(1);
   const [stockNote, setStockNote] = useState("");
 
-  const [borrowerName, setBorrowerName] = useState("");
   const [borrowNote, setBorrowNote] = useState("");
 
   const [limit, setLimit] = useState(10);
@@ -63,7 +62,7 @@ export default function ItemsTable() {
   //handler "load more"
   const handleLoadMore = () => {
     setVisibleCount((prev) => prev + limit);
-  }
+  };
 
   // ========================
   // ✅ FETCH ITEMS
@@ -127,7 +126,6 @@ export default function ItemsTable() {
 
   const handleOpenBorrow = (item) => {
     setSelectedItem(item);
-    setBorrowerName("");
     setBorrowNote("");
     setOpenBorrow(true);
   };
@@ -178,7 +176,7 @@ export default function ItemsTable() {
     const token = localStorage.getItem("token");
     await axios.post(
       `http://172.172.255.184:4000/items/${selectedItem.id}/borrow`,
-      { borrower_name: borrowerName, note: borrowNote },
+      { note: borrowNote },
       { headers: { Authorization: `Bearer ${token}` } },
     );
     fetchItems(token);
@@ -417,12 +415,6 @@ export default function ItemsTable() {
           <DialogHeader>
             <DialogTitle>Borrow Item</DialogTitle>
           </DialogHeader>
-
-          <Input
-            placeholder="Nama Peminjam"
-            value={borrowerName}
-            onChange={(e) => setBorrowerName(e.target.value)}
-          />
 
           <Input
             placeholder="Catatan"
