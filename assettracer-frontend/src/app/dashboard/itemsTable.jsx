@@ -314,9 +314,6 @@ export default function ItemsTable() {
         <div className="flex justify-between items-center mt-4 bg-gray-50 border border-gray-200 p-3 rounded-md shadow-sm">
           {/* Bagian Kiri: Pilihan Batas Data */}
           <div className="flex gap-2 items-center">
-            <span className="text-sm text-gray-500 mr-2 font-medium">
-              Tampilkan:
-            </span>
             {[20, 100, 500].map((num) => (
               <button
                 key={num}
