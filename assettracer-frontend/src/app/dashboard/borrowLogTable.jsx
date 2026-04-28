@@ -10,18 +10,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-
-export default function StockLogTable() {
+export default function BorrowLogTable() {
   const [data, setData] = useState([]);
   const [itemsMap, setItemsMap] = useState({});
+
+  // ✅ FIX 1: Tambahkan state untuk pagination yang hilang
+  const [limit, setLimit] = useState(20);
+  const [visibleCount, setVisibleCount] = useState(20);
 
   //handler
   const handleChangeLimit = (newLimit) => {
@@ -60,7 +55,7 @@ export default function StockLogTable() {
       const json = await res.json();
       setData(json);
     } catch (err) {
-      console.error("Gagal ambil stock logs:", err);
+      console.error("Gagal ambil borrow logs:", err);
     }
   };
 
@@ -76,6 +71,9 @@ export default function StockLogTable() {
     "Tgl Kembali",
     "Note",
   ];
+
+  // ✅ FIX 2: Tambahkan pemotong data untuk pagination
+  const paginatedData = data.slice(0, visibleCount);
 
   return (
     <div className="rounded-md border p-4 space-y-4">
@@ -116,7 +114,7 @@ export default function StockLogTable() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} className="text-center">
+                <TableCell colSpan={5} className="text-center">
                   Tidak ada data
                 </TableCell>
               </TableRow>
@@ -145,7 +143,8 @@ export default function StockLogTable() {
         </div>
 
         {/* Bagian Kanan: Tombol Load More */}
-        {visibleCount < items.length && (
+        {/* ✅ FIX 3: Ganti items.length jadi data.length */}
+        {visibleCount < data.length && (
           <button
             onClick={handleLoadMore}
             className="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 text-sm font-medium rounded-md shadow-sm transition-colors"

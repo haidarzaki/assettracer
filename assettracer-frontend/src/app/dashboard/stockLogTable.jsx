@@ -65,6 +65,9 @@ export default function StockLogTable() {
 
   const headers = ["Nama Item", "Type", "Qty", "Note", "Tanggal"];
 
+  // ✅ FIX 1: Potong data sesuai visibleCount untuk pagination
+  const paginatedData = data.slice(0, visibleCount);
+
   return (
     <div className="rounded-md border p-4 space-y-4">
       {/* TABLE */}
@@ -124,7 +127,8 @@ export default function StockLogTable() {
         </div>
 
         {/* Bagian Kanan: Tombol Load More */}
-        {visibleCount < items.length && (
+        {/* ✅ FIX 2: Ganti items.length jadi data.length */}
+        {visibleCount < data.length && (
           <button
             onClick={handleLoadMore}
             className="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 text-sm font-medium rounded-md shadow-sm transition-colors"
