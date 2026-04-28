@@ -23,15 +23,16 @@ export default function StockLogTable() {
   const [data, setData] = useState([]);
   const [itemsMap, setItemsMap] = useState({});
 
-  // PAGINATION STATES
-  const [page, setPage] = useState(1);
-  const rowsPerPage = 10;
+  //handler
+  const handleChangeLimit = (newLimit) => {
+    setLimit(newLimit);
+    setVisibleCount(newLimit);
+  };
 
-  const totalPages = Math.ceil(data.length / rowsPerPage);
-  const paginatedData = data.slice(
-    (page - 1) * rowsPerPage,
-    page * rowsPerPage,
-  );
+  //handler "load more"
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => prev + limit);
+  };
 
   // Fetch items
   const fetchItemsMap = async () => {
