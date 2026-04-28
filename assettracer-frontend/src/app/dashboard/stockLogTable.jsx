@@ -10,18 +10,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-
 export default function StockLogTable() {
   const [data, setData] = useState([]);
   const [itemsMap, setItemsMap] = useState({});
+
+  const [limit, setLimit] = useState(10);
+  const [visibleCount, setVisibleCount] = useState(10);
 
   // PAGINATION STATES
   const handleChangeLimit = (newLimit) => {
