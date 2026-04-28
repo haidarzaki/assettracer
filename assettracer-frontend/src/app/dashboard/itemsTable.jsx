@@ -311,20 +311,20 @@ export default function ItemsTable() {
         </table>
 
         {/* pagination */}
-        {/* ===================== */}
-        {/* ✅ CUSTOM PAGINATION (LOAD MORE) */}
-        {/* ===================== */}
-        <div className="flex justify-between items-center mt-6 bg-gray-900 text-white p-3 rounded-md">
+        <div className="flex justify-between items-center mt-4 bg-gray-50 border border-gray-200 p-3 rounded-md shadow-sm">
           {/* Bagian Kiri: Pilihan Batas Data */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
+            <span className="text-sm text-gray-500 mr-2 font-medium">
+              Tampilkan:
+            </span>
             {[20, 100, 500].map((num) => (
               <button
                 key={num}
                 onClick={() => handleChangeLimit(num)}
-                className={`px-3 py-1 rounded text-sm font-medium transition ${
+                className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
                   limit === num
-                    ? "bg-gray-700 text-white"
-                    : "bg-transparent text-gray-400 hover:text-white hover:bg-gray-800"
+                    ? "bg-white border border-gray-300 text-gray-900 shadow-sm"
+                    : "bg-transparent text-gray-500 hover:text-gray-900 hover:bg-gray-200"
                 }`}
               >
                 {num}
@@ -332,10 +332,11 @@ export default function ItemsTable() {
             ))}
           </div>
 
+          {/* Bagian Kanan: Tombol Load More */}
           {visibleCount < items.length && (
             <button
               onClick={handleLoadMore}
-              className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium rounded transition"
+              className="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 text-sm font-medium rounded-md shadow-sm transition-colors"
             >
               Load More
             </button>
