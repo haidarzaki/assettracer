@@ -109,43 +109,35 @@ export default function StockLogTable() {
         </Table>
       </div>
 
-      {/* PAGINATION */}
-      {totalPages > 1 && (
-        <Pagination>
-          <PaginationContent>
-            {/* PREV */}
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className={page === 1 ? "pointer-events-none opacity-40" : ""}
-              />
-            </PaginationItem>
+      {/* pagination */}
+      <div className="flex justify-between items-center mt-4 bg-gray-50 border border-gray-200 p-3 rounded-md shadow-sm">
+        {/* Bagian Kiri: Pilihan Batas Data */}
+        <div className="flex gap-2 items-center">
+          {[20, 100, 500].map((num) => (
+            <button
+              key={num}
+              onClick={() => handleChangeLimit(num)}
+              className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                limit === num
+                  ? "bg-white border border-gray-300 text-gray-900 shadow-sm"
+                  : "bg-transparent text-gray-500 hover:text-gray-900 hover:bg-gray-200"
+              }`}
+            >
+              {num}
+            </button>
+          ))}
+        </div>
 
-            {/* PAGE NUMBER */}
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-              <PaginationItem key={p}>
-                <PaginationLink
-                  isActive={p === page}
-                  onClick={() => setPage(p)}
-                  className="cursor-pointer"
-                >
-                  {p}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
-
-            {/* NEXT */}
-            <PaginationItem>
-              <PaginationNext
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                className={
-                  page === totalPages ? "pointer-events-none opacity-40" : ""
-                }
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      )}
+        {/* Bagian Kanan: Tombol Load More */}
+        {visibleCount < items.length && (
+          <button
+            onClick={handleLoadMore}
+            className="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 text-sm font-medium rounded-md shadow-sm transition-colors"
+          >
+            Load More
+          </button>
+        )}
+      </div>
     </div>
   );
 }
