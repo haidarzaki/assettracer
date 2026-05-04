@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import itemRoutes from "./routes/itemRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import locationRoutes from "./routes/locationRoutes.js";
 import cors from "cors";
 
 dotenv.config();
@@ -23,6 +24,9 @@ app.use("/items", itemRoutes);
 
 //route user
 app.use("/auth", userRoutes);
+
+//route location
+app.use("locations", locationRoutes);
 
 //PORT
 const PORT = process.env.PORT || 3000;
