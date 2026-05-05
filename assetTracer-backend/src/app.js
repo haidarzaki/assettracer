@@ -26,7 +26,7 @@ app.use("/items", itemRoutes);
 app.use("/auth", userRoutes);
 
 //route location
-app.use("locations", locationRoutes);
+app.use("/locations", locationRoutes);
 
 //PORT
 const PORT = process.env.PORT || 3000;
