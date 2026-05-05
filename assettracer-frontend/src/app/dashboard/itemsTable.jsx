@@ -25,6 +25,7 @@ import AddItemDialog from "./AddItemDialog";
 
 export default function ItemsTable() {
   const [items, setItems] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // ✅ STATE BARU: Untuk menyimpan role dari Local Storage
@@ -42,6 +43,7 @@ export default function ItemsTable() {
     name: "",
     description: "",
     is_unique: false,
+    location_id: 1,
   });
 
   const [stockQty, setStockQty] = useState(1);
@@ -83,7 +85,10 @@ export default function ItemsTable() {
   useEffect(() => {
     // 1. Ambil Token
     const token = localStorage.getItem("token");
-    if (token) fetchItems(token);
+    if (token) {
+      fetchItems(token);
+      fetchLocations(token);
+    }
 
     // 2. Ambil Role (KTP)
     const storedUser = localStorage.getItem("user");
@@ -106,6 +111,7 @@ export default function ItemsTable() {
       name: item.name,
       description: item.description,
       is_unique: item.is_unique,
+      location_id: item.location_id || 1,
     });
     setOpenEdit(true);
   };
@@ -347,6 +353,21 @@ export default function ItemsTable() {
           <DialogHeader>
             <DialogTitle>Edit Item</DialogTitle>
           </DialogHeader>
+
+          <Label>Lokasi / Gudang</Label>
+          <select
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+            value={form.location_id}
+            onChange={(e) =>
+              setForm({ ...form, location_id: Number(e.target.value) })
+            }
+          >
+            {locations.map((loc) => (
+              <option key={loc.id} value={loc.id}>
+                {loc.name}
+              </option>
+            ))}
+          </select>
 
           <Label>Nama</Label>
           <Input
