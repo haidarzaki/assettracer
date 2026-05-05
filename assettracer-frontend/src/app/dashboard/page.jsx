@@ -14,8 +14,8 @@ import AddItemDialog from "./AddItemDialog";
 export default function DashboardPage() {
   // 2. Siapkan state untuk menampung data role
   const [role, setRole] = useState(null);
-  const [locations, setLocations] = useState(null);
-  const [selectedLocations, setSelectedLocations] = useState(null);
+  const [locations, setLocations] = useState([]);
+  const [selectedLocations, setSelectedLocations] = useState(1);
 
   // 3. Ambil role dari localStorage saat halaman pertama kali dimuat
   useEffect(() => {
