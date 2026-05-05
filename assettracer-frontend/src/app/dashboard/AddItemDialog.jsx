@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 
-export default function AddItemDialog({ onSuccess }) {
+export default function AddItemDialog({ onSuccess, locationId }) {
   const [open, setOpen] = useState(false);
 
   const [form, setForm] = useState({
@@ -47,6 +47,7 @@ export default function AddItemDialog({ onSuccess }) {
           is_unique: form.is_unique,
           serial_code: form.is_unique ? form.serial_code : null,
           quantity: form.is_unique ? null : Number(form.quantity),
+          location_id: locationId || 1,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
