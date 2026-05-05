@@ -15,7 +15,7 @@ export default function DashboardPage() {
   // 2. Siapkan state untuk menampung data role
   const [role, setRole] = useState(null);
   const [locations, setLocations] = useState([]);
-  const [selectedLocations, setSelectedLocations] = useState(1);
+  const [selectedLocation, setSelectedLocation] = useState(1);
 
   // 3. Ambil role dari localStorage saat halaman pertama kali dimuat
   useEffect(() => {
@@ -78,24 +78,24 @@ export default function DashboardPage() {
 
             {/* 5. CONDITIONAL RENDERING: Sembunyikan tombol Tambah jika bukan ADMIN */}
             {role === "ADMIN" && (
-              <AddItemDialog locationId={selectedLocations} />
+              <AddItemDialog locationId={selectedLocation} />
             )}
           </div>
 
           {/* CONTENT ADA DI DALAM TABS YANG SAMA */}
           <TabsContent value="items">
-            <ItemsTable locationId={selectedLocations} />
+            <ItemsTable locationId={selectedLocation} />
           </TabsContent>
 
           {/* 6. CONDITIONAL RENDERING: Sembunyikan konten tabel Log jika bukan ADMIN */}
           {role === "ADMIN" && (
             <>
               <TabsContent value="stock">
-                <StockLogTable locationId={selectedLocations} />
+                <StockLogTable locationId={selectedLocation} />
               </TabsContent>
 
               <TabsContent value="borrow">
-                <BorrowLogTable locationId={selectedLocations} />
+                <BorrowLogTable locationId={selectedLocation} />
               </TabsContent>
             </>
           )}
