@@ -44,7 +44,7 @@ export const stockOut = async (req, res) => {
       WHERE id = $2
       RETURNING *
       `,
-      [newQuantity, id]
+      [newQuantity, id],
     );
 
     // Insert into stock_transactions
@@ -53,7 +53,7 @@ export const stockOut = async (req, res) => {
         INSERT INTO stock_transactions (item_id, type, quantity, note)
         VALUES ($1, $2, $3, $4)
       `,
-      [id, "out", amount, note || "Stock reduced"]
+      [id, "out", amount, note || "Stock reduced"],
     );
 
     res.json({
@@ -69,7 +69,7 @@ export const stockOut = async (req, res) => {
 export const stockLog = async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT * FROM "stock_transactions" ORDER BY id ASC`
+      `SELECT * FROM "stock_transactions" ORDER BY id ASC`,
     );
     res.json(result.rows);
   } catch (err) {

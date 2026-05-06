@@ -12,23 +12,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Trash2, Pencil } from "lucide-react";
-import AddItemDialog from "./AddItemDialog";
-// import {
-//   Pagination,
-//   PaginationContent,
-//   PaginationEllipsis,
-//   PaginationItem,
-//   PaginationLink,
-//   PaginationNext,
-//   PaginationPrevious,
-// } from "@/components/ui/pagination";
 
 export default function ItemsTable() {
   const [items, setItems] = useState([]);
-  const [locations, setLocations] = useState([]);
+  const [locations, setLocations] = useState([]); // ✅ STATE BARU: Untuk menyimpan daftar lokasi
   const [loading, setLoading] = useState(true);
-
-  // ✅ STATE BARU: Untuk menyimpan role dari Local Storage
   const [role, setRole] = useState(null);
 
   // modal states
@@ -43,12 +31,11 @@ export default function ItemsTable() {
     name: "",
     description: "",
     is_unique: false,
-    location_id: 1,
+    location_id: 1, // ✅ Menampung data lokasi untuk diedit
   });
 
   const [stockQty, setStockQty] = useState(1);
   const [stockNote, setStockNote] = useState("");
-
   const [borrowNote, setBorrowNote] = useState("");
 
   const [limit, setLimit] = useState(10);
@@ -61,13 +48,12 @@ export default function ItemsTable() {
     setVisibleCount(newLimit);
   };
 
-  //handler "load more"
   const handleLoadMore = () => {
     setVisibleCount((prev) => prev + limit);
   };
 
   // ========================
-  // ✅ FETCH ITEMS
+  // ✅ FETCH ITEMS & LOCATIONS
   // ========================
   const fetchItems = async (token) => {
     try {
@@ -82,15 +68,24 @@ export default function ItemsTable() {
     }
   };
 
+  const fetchLocations = async (token) => {
+    try {
+      const res = await axios.get("http://172.172.255.184:4000/locations", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setLocations(res.data);
+    } catch (err) {
+      console.error("Fetch locations error:", err);
+    }
+  };
+
   useEffect(() => {
-    // 1. Ambil Token
     const token = localStorage.getItem("token");
     if (token) {
       fetchItems(token);
-      fetchLocations(token);
+      fetchLocations(token); // ✅ Panggil data lokasi saat halaman dimuat
     }
 
-    // 2. Ambil Role (KTP)
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
@@ -111,7 +106,7 @@ export default function ItemsTable() {
       name: item.name,
       description: item.description,
       is_unique: item.is_unique,
-      location_id: item.location_id || 1,
+      location_id: item.location_id || 1, // ✅ Memasukkan lokasi saat ini ke dalam form
     });
     setOpenEdit(true);
   };
@@ -136,24 +131,25 @@ export default function ItemsTable() {
     setOpenBorrow(true);
   };
 
-  const handleReturnBorrow = (item) => {
-    setOpenBorrow(false);
-  };
-
   // ========================
   // ✅ API ACTIONS
   // ========================
   const handleUpdateItem = async () => {
-    const token = localStorage.getItem("token");
-    await axios.put(
-      `http://172.172.255.184:4000/items/${selectedItem.id}`,
-      form,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      },
-    );
-    fetchItems(token);
-    setOpenEdit(false);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `http://172.172.255.184:4000/items/${selectedItem.id}`,
+        form,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      fetchItems(token);
+      setOpenEdit(false);
+    } catch (error) {
+      console.error("Update error:", error);
+      alert("Gagal memperbarui data");
+    }
   };
 
   const handleStockIn = async () => {
@@ -192,13 +188,11 @@ export default function ItemsTable() {
   const handleReturn = async (itemId) => {
     try {
       const token = localStorage.getItem("token");
-
       await axios.post(
         `http://172.172.255.184:4000/items/${itemId}/return`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
-
       fetchItems(token);
     } catch (err) {
       console.error("Return error:", err);
@@ -241,7 +235,6 @@ export default function ItemsTable() {
                 <td className="border p-2 text-center">{item.quantity}</td>
                 <td className="border p-2 flex gap-2 justify-center">
                   <div className="flex justify-end gap-2">
-                    {/* ✅ CONDITIONAL: STOCK IN → HANYA NON UNIQUE DAN ADMIN */}
                     {!item.is_unique && role === "ADMIN" && (
                       <button
                         onClick={() => handleOpenStockIn(item)}
@@ -252,7 +245,6 @@ export default function ItemsTable() {
                       </button>
                     )}
 
-                    {/* ✅ CONDITIONAL: STOCK OUT → HANYA NON UNIQUE DAN ADMIN */}
                     {!item.is_unique && role === "ADMIN" && (
                       <button
                         onClick={() => handleOpenStockOut(item)}
@@ -263,7 +255,6 @@ export default function ItemsTable() {
                       </button>
                     )}
 
-                    {/* ✅ TOMBOL BORROW (BISA DIAKSES SEMUA ROLE) */}
                     {item.is_unique && item.status === "available" && (
                       <Button
                         size="sm"
@@ -277,7 +268,6 @@ export default function ItemsTable() {
                       </Button>
                     )}
 
-                    {/* ✅ TOMBOL RETURN (BISA DIAKSES SEMUA ROLE) */}
                     {item.is_unique && item.status === "borrowed" && (
                       <Button
                         size="sm"
@@ -288,7 +278,6 @@ export default function ItemsTable() {
                       </Button>
                     )}
 
-                    {/* ✅ CONDITIONAL: TOMBOL EDIT (HANYA ADMIN) */}
                     {role === "ADMIN" && (
                       <button
                         className="opacity-0 group-hover:opacity-100 transition p-1 rounded hover:bg-blue-100 text-blue-600"
@@ -299,7 +288,6 @@ export default function ItemsTable() {
                       </button>
                     )}
 
-                    {/* ✅ CONDITIONAL: TOMBOL DELETE (HANYA ADMIN) */}
                     {role === "ADMIN" && (
                       <button
                         onClick={() => handleDelete(item.id)}
@@ -318,7 +306,6 @@ export default function ItemsTable() {
 
         {/* pagination */}
         <div className="flex justify-between items-center mt-4 bg-gray-50 border border-gray-200 p-3 rounded-md shadow-sm">
-          {/* Bagian Kiri: Pilihan Batas Data */}
           <div className="flex gap-2 items-center">
             {[20, 100, 500].map((num) => (
               <button
@@ -335,7 +322,6 @@ export default function ItemsTable() {
             ))}
           </div>
 
-          {/* Bagian Kanan: Tombol Load More */}
           {visibleCount < items.length && (
             <button
               onClick={handleLoadMore}
@@ -347,7 +333,7 @@ export default function ItemsTable() {
         </div>
       </div>
 
-      {/* Modal Dialogs tetap utuh di bawah sini */}
+      {/* ✅ DIALOG EDIT YANG SUDAH DIPERBARUI */}
       <Dialog open={openEdit} onOpenChange={setOpenEdit}>
         <DialogContent>
           <DialogHeader>
@@ -364,7 +350,7 @@ export default function ItemsTable() {
           >
             {locations.map((loc) => (
               <option key={loc.id} value={loc.id}>
-                {loc.name}
+                {loc.name} {loc.address ? `(${loc.address})` : ""}
               </option>
             ))}
           </select>
