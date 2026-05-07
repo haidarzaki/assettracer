@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Trash2, Pencil } from "lucide-react";
 
-export default function ItemsTable() {
+export default function ItemsTable({ locationId }) {
   const [items, setItems] = useState([]);
   const [locations, setLocations] = useState([]); // ✅ STATE BARU: Untuk menyimpan daftar lokasi
   const [loading, setLoading] = useState(true);
@@ -57,6 +57,9 @@ export default function ItemsTable() {
   // ========================
   const fetchItems = async (token) => {
     try {
+      const url = locId
+        ? "http://172.172.255.184:4000/items?location_id=${locId}"
+        : "http://172.172.255.184:4000/items";
       const res = await axios.get("http://172.172.255.184:4000/items", {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -82,7 +85,7 @@ export default function ItemsTable() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      fetchItems(token);
+      fetchItems(token, locationId);
       fetchLocations(token); // ✅ Panggil data lokasi saat halaman dimuat
     }
 
@@ -91,7 +94,7 @@ export default function ItemsTable() {
       const parsedUser = JSON.parse(storedUser);
       setRole(parsedUser.role);
     }
-  }, []);
+  }, [locationId]);
 
   if (loading) {
     return <p className="text-center mt-10">Loading items...</p>;
@@ -208,7 +211,7 @@ export default function ItemsTable() {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    fetchItems(token);
+    fetchItems(token, locationId);
   };
 
   // ========================

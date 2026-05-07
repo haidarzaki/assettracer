@@ -10,7 +10,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export default function StockLogTable() {
+// ✅ FIX 1: Terima locationId sebagai props
+export default function StockLogTable({ locationId }) {
   const [data, setData] = useState([]);
   const [itemsMap, setItemsMap] = useState({});
 
@@ -23,16 +24,19 @@ export default function StockLogTable() {
     setVisibleCount(newLimit);
   };
 
-  //handler "load more"
   const handleLoadMore = () => {
     setVisibleCount((prev) => prev + limit);
   };
 
-  // Fetch items
-  const fetchItemsMap = async () => {
+  // ✅ FIX 2: Tambahkan locId parameter ke fungsi fetch items
+  const fetchItemsMap = async (locId) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://172.172.255.184:4000/items", {
+      const url = locId
+        ? `http://172.172.255.184:4000/items?location_id=${locId}`
+        : "http://172.172.255.184:4000/items";
+
+      const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const items = await res.json();
@@ -44,11 +48,15 @@ export default function StockLogTable() {
     }
   };
 
-  // Fetch stock logs
-  const fetchStockLogs = async () => {
+  // ✅ FIX 3: Tambahkan locId parameter ke fungsi fetch stock logs
+  const fetchStockLogs = async (locId) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://172.172.255.184:4000/items/stock", {
+      const url = locId
+        ? `http://172.172.255.184:4000/items/stock?location_id=${locId}`
+        : "http://172.172.255.184:4000/items/stock";
+
+      const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const json = await res.json();
@@ -58,15 +66,17 @@ export default function StockLogTable() {
     }
   };
 
+  // ✅ FIX 4: Tambahkan locationId ke array dependency useEffect
   useEffect(() => {
-    fetchItemsMap();
-    fetchStockLogs();
-  }, []);
+    fetchItemsMap(locationId);
+    fetchStockLogs(locationId);
+  }, [locationId]);
 
   const headers = ["Nama Item", "Type", "Qty", "Note", "Tanggal"];
 
-  // ✅ FIX 1: Potong data sesuai visibleCount untuk pagination
-  const paginatedData = data.slice(0, visibleCount);
+  // ✅ FIX 5: Filter data agar hanya menampilkan log barang yang ada di gudang saat ini (opsional tapi aman)
+  const filteredData = data.filter((row) => itemsMap[row.item_id]);
+  const paginatedData = filteredData.slice(0, visibleCount);
 
   return (
     <div className="rounded-md border p-4 space-y-4">
@@ -109,7 +119,6 @@ export default function StockLogTable() {
 
       {/* pagination */}
       <div className="flex justify-between items-center mt-4 bg-gray-50 border border-gray-200 p-3 rounded-md shadow-sm">
-        {/* Bagian Kiri: Pilihan Batas Data */}
         <div className="flex gap-2 items-center">
           {[20, 100, 500].map((num) => (
             <button
@@ -126,9 +135,7 @@ export default function StockLogTable() {
           ))}
         </div>
 
-        {/* Bagian Kanan: Tombol Load More */}
-        {/* ✅ FIX 2: Ganti items.length jadi data.length */}
-        {visibleCount < data.length && (
+        {visibleCount < filteredData.length && (
           <button
             onClick={handleLoadMore}
             className="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 text-sm font-medium rounded-md shadow-sm transition-colors"

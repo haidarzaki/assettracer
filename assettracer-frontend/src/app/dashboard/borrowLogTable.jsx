@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export default function BorrowLogTable() {
+export default function BorrowLogTable({ locationId }) {
   const [data, setData] = useState([]);
   const [itemsMap, setItemsMap] = useState({});
 
@@ -30,10 +30,13 @@ export default function BorrowLogTable() {
   };
 
   // Fetch items
-  const fetchItemsMap = async () => {
+  const fetchItemsMap = async (locId) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://172.172.255.184:4000/items", {
+      const url = locId
+        ? `http://172.172.255.184:4000/items?location_id=${lodId}`
+        : "http://172.172.255.184:4000/items";
+      const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const items = await res.json();
@@ -46,10 +49,13 @@ export default function BorrowLogTable() {
   };
 
   // Fetch logs
-  const fetchBorrowLogs = async () => {
+  const fetchBorrowLogs = async (locId) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://172.172.255.184:4000/items/borrow", {
+      const url = locId
+        ? `http://172.172.255.184:4000/items?location_id=${lodId}`
+        : "http://172.172.255.184:4000/items";
+      const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const json = await res.json();
@@ -62,7 +68,7 @@ export default function BorrowLogTable() {
   useEffect(() => {
     fetchItemsMap();
     fetchBorrowLogs();
-  }, []);
+  }, [locationId]);
 
   const headers = [
     "Nama Item",
@@ -73,7 +79,8 @@ export default function BorrowLogTable() {
   ];
 
   // ✅ FIX 2: Tambahkan pemotong data untuk pagination
-  const paginatedData = data.slice(0, visibleCount);
+  const filteredData = data.filter((row) => itemsMap[row.item_id]);
+  const paginatedData = filteredData.slice(0, visibleCount);
 
   return (
     <div className="rounded-md border p-4 space-y-4">
