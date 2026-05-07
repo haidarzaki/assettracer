@@ -55,12 +55,12 @@ export default function ItemsTable({ locationId }) {
   // ========================
   // ✅ FETCH ITEMS & LOCATIONS
   // ========================
-  const fetchItems = async (token) => {
+  const fetchItems = async (token, locId) => {
     try {
       const url = locId
         ? "http://172.172.255.184:4000/items?location_id=${locId}"
         : "http://172.172.255.184:4000/items";
-      const res = await axios.get("http://172.172.255.184:4000/items", {
+      const res = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setItems(res.data);
