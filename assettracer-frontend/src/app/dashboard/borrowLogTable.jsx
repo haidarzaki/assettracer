@@ -33,8 +33,9 @@ export default function BorrowLogTable({ locationId }) {
   const fetchItemsMap = async (locId) => {
     try {
       const token = localStorage.getItem("token");
+      // ✅ FIX 2: Typo lodId diperbaiki jadi locId
       const url = locId
-        ? `http://172.172.255.184:4000/items?location_id=${lodId}`
+        ? `http://172.172.255.184:4000/items?location_id=${locId}`
         : "http://172.172.255.184:4000/items";
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
@@ -52,9 +53,10 @@ export default function BorrowLogTable({ locationId }) {
   const fetchBorrowLogs = async (locId) => {
     try {
       const token = localStorage.getItem("token");
+      // ✅ FIX 3: Typo locId diperbaiki dan endpoint diarahkan ke /items/borrow
       const url = locId
-        ? `http://172.172.255.184:4000/items?location_id=${lodId}`
-        : "http://172.172.255.184:4000/items";
+        ? `http://172.172.255.184:4000/items/borrow?location_id=${locId}`
+        : "http://172.172.255.184:4000/items/borrow";
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -66,8 +68,9 @@ export default function BorrowLogTable({ locationId }) {
   };
 
   useEffect(() => {
-    fetchItemsMap();
-    fetchBorrowLogs();
+    // ✅ FIX 4: Pastikan parameter locationId dikirim ke dalam fungsi
+    fetchItemsMap(locationId);
+    fetchBorrowLogs(locationId);
   }, [locationId]);
 
   const headers = [
@@ -78,7 +81,7 @@ export default function BorrowLogTable({ locationId }) {
     "Note",
   ];
 
-  // ✅ FIX 2: Tambahkan pemotong data untuk pagination
+  // ✅ FIX 5: Tambahkan pemotong data untuk pagination
   const filteredData = data.filter((row) => itemsMap[row.item_id]);
   const paginatedData = filteredData.slice(0, visibleCount);
 
@@ -150,8 +153,8 @@ export default function BorrowLogTable({ locationId }) {
         </div>
 
         {/* Bagian Kanan: Tombol Load More */}
-        {/* ✅ FIX 3: Ganti items.length jadi data.length */}
-        {visibleCount < data.length && (
+        {/* ✅ FIX 6: Ubah agar komparasinya dengan filteredData.length */}
+        {visibleCount < filteredData.length && (
           <button
             onClick={handleLoadMore}
             className="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 text-sm font-medium rounded-md shadow-sm transition-colors"

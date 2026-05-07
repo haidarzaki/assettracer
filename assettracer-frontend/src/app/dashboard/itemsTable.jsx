@@ -12,6 +12,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Trash2, Pencil } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function ItemsTable({ locationId }) {
   const [items, setItems] = useState([]);
@@ -147,7 +154,7 @@ export default function ItemsTable({ locationId }) {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
-      fetchItems(token);
+      fetchItems(token, locationId);
       setOpenEdit(false);
     } catch (error) {
       console.error("Update error:", error);
@@ -162,7 +169,7 @@ export default function ItemsTable({ locationId }) {
       { amount: stockQty, note: stockNote },
       { headers: { Authorization: `Bearer ${token}` } },
     );
-    fetchItems(token);
+    fetchItems(token, locationId);
     setOpenStockIn(false);
   };
 
@@ -173,7 +180,7 @@ export default function ItemsTable({ locationId }) {
       { amount: stockQty, note: stockNote },
       { headers: { Authorization: `Bearer ${token}` } },
     );
-    fetchItems(token);
+    fetchItems(token, locationId);
     setOpenStockOut(false);
   };
 
@@ -184,7 +191,7 @@ export default function ItemsTable({ locationId }) {
       { note: borrowNote },
       { headers: { Authorization: `Bearer ${token}` } },
     );
-    fetchItems(token);
+    fetchItems(token, locationId);
     setOpenBorrow(false);
   };
 
@@ -196,7 +203,7 @@ export default function ItemsTable({ locationId }) {
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
-      fetchItems(token);
+      fetchItems(token, locationId);
     } catch (err) {
       console.error("Return error:", err);
       alert("Gagal return item");
@@ -336,7 +343,7 @@ export default function ItemsTable({ locationId }) {
         </div>
       </div>
 
-      {/* ✅ DIALOG EDIT YANG SUDAH DIPERBARUI */}
+      {/* ✅ DIALOG EDIT MENGGUNAKAN SHADCN SELECT */}
       <Dialog open={openEdit} onOpenChange={setOpenEdit}>
         <DialogContent>
           <DialogHeader>
@@ -344,19 +351,23 @@ export default function ItemsTable({ locationId }) {
           </DialogHeader>
 
           <Label>Lokasi / Gudang</Label>
-          <select
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-            value={form.location_id}
-            onChange={(e) =>
-              setForm({ ...form, location_id: Number(e.target.value) })
+          <Select
+            value={form.location_id.toString()}
+            onValueChange={(val) =>
+              setForm({ ...form, location_id: Number(val) })
             }
           >
-            {locations.map((loc) => (
-              <option key={loc.id} value={loc.id}>
-                {loc.name} {loc.address ? `(${loc.address})` : ""}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-full bg-white border-gray-300">
+              <SelectValue placeholder="Pilih Lokasi" />
+            </SelectTrigger>
+            <SelectContent>
+              {locations.map((loc) => (
+                <SelectItem key={loc.id} value={loc.id.toString()}>
+                  {loc.name} {loc.address ? `(${loc.address})` : ""}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
           <Label>Nama</Label>
           <Input

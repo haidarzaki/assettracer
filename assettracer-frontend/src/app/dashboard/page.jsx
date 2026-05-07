@@ -1,9 +1,14 @@
 "use client";
 
-// 1. Tambahkan useState dan useEffect
 import { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import axios from "axios";
 
 import ItemsTable from "./itemsTable";
@@ -12,12 +17,10 @@ import BorrowLogTable from "./borrowLogTable";
 import AddItemDialog from "./AddItemDialog";
 
 export default function DashboardPage() {
-  // 2. Siapkan state untuk menampung data role
   const [role, setRole] = useState(null);
   const [locations, setLocations] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(1);
 
-  // 3. Ambil role dari localStorage saat halaman pertama kali dimuat
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -47,18 +50,22 @@ export default function DashboardPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Represent Pondok Cabe</h1>
 
-        {/* DROPDOWN PEMILIH LOKASI */}
-        <select
-          className="border border-gray-300 rounded-md p-2 font-medium bg-white"
-          value={selectedLocation}
-          onChange={(e) => setSelectedLocation(Number(e.target.value))}
+        {/* ✅ DROPDOWN PEMILIH LOKASI MENGGUNAKAN SHADCN */}
+        <Select
+          value={selectedLocation.toString()}
+          onValueChange={(val) => setSelectedLocation(Number(val))}
         >
-          {locations.map((loc) => (
-            <option key={loc.id} value={loc.id}>
-              {loc.name} ({loc.address})
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="w-[300px] bg-white font-medium border-gray-300">
+            <SelectValue placeholder="Pilih Lokasi" />
+          </SelectTrigger>
+          <SelectContent>
+            {locations.map((loc) => (
+              <SelectItem key={loc.id} value={loc.id.toString()}>
+                {loc.name} {loc.address ? `(${loc.address})` : ""}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="flex justify-between items-center mb-4">
@@ -67,7 +74,6 @@ export default function DashboardPage() {
             <TabsList>
               <TabsTrigger value="items">Items</TabsTrigger>
 
-              {/* 4. CONDITIONAL RENDERING: Sembunyikan Tab Log jika bukan ADMIN */}
               {role === "ADMIN" && (
                 <>
                   <TabsTrigger value="stock">Log Stock</TabsTrigger>
@@ -76,18 +82,15 @@ export default function DashboardPage() {
               )}
             </TabsList>
 
-            {/* 5. CONDITIONAL RENDERING: Sembunyikan tombol Tambah jika bukan ADMIN */}
             {role === "ADMIN" && (
               <AddItemDialog locationId={selectedLocation} />
             )}
           </div>
 
-          {/* CONTENT ADA DI DALAM TABS YANG SAMA */}
           <TabsContent value="items">
             <ItemsTable locationId={selectedLocation} />
           </TabsContent>
 
-          {/* 6. CONDITIONAL RENDERING: Sembunyikan konten tabel Log jika bukan ADMIN */}
           {role === "ADMIN" && (
             <>
               <TabsContent value="stock">

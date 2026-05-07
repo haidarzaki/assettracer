@@ -13,6 +13,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function AddItemDialog({ onSuccess, locationId }) {
   const [open, setOpen] = useState(false);
@@ -139,16 +146,14 @@ export default function AddItemDialog({ onSuccess, locationId }) {
           <DialogTitle>Tambah Item Baru</DialogTitle>
         </DialogHeader>
 
-        {/* PILIH LOKASI */}
+        {/* PILIH LOKASI MENGGUNAKAN SHADCN */}
         <div className="space-y-2 mb-2 p-3 border rounded-md bg-gray-50">
           <Label className="font-semibold text-blue-600">
             Lokasi Penempatan Barang
           </Label>
-          <select
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-            value={isAddingNewLocation ? "NEW" : form.location_id}
-            onChange={(e) => {
-              const val = e.target.value;
+          <Select
+            value={isAddingNewLocation ? "NEW" : form.location_id.toString()}
+            onValueChange={(val) => {
               if (val === "NEW") {
                 setIsAddingNewLocation(true);
               } else {
@@ -157,15 +162,20 @@ export default function AddItemDialog({ onSuccess, locationId }) {
               }
             }}
           >
-            {locations.map((loc) => (
-              <option key={loc.id} value={loc.id}>
-                {loc.name} {loc.address ? `(${loc.address})` : ""}
-              </option>
-            ))}
-            <option value="NEW" className="font-bold text-blue-600">
-              ➕ Tambah Lokasi Baru...
-            </option>
-          </select>
+            <SelectTrigger className="w-full bg-white border-gray-300">
+              <SelectValue placeholder="Pilih Lokasi" />
+            </SelectTrigger>
+            <SelectContent>
+              {locations.map((loc) => (
+                <SelectItem key={loc.id} value={loc.id.toString()}>
+                  {loc.name} {loc.address ? `(${loc.address})` : ""}
+                </SelectItem>
+              ))}
+              <SelectItem value="NEW" className="font-bold text-blue-600">
+                ➕ Tambah Lokasi Baru...
+              </SelectItem>
+            </SelectContent>
+          </Select>
 
           {/* MUNCUL KALAU PILIH LOKASI BARU */}
           {isAddingNewLocation && (
